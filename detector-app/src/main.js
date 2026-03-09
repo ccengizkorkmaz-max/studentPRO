@@ -91,20 +91,30 @@ async function triggerCamera() {
 async function runPulse() {
   if (!isAnalysing) return;
 
+  // Sync canvas size to video display size EVERY frame (handles auto-zoom/resize)
+  if (canvas.width !== video.clientWidth || canvas.height !== video.clientHeight) {
+    canvas.width = video.clientWidth;
+    canvas.height = video.clientHeight;
+  }
+
+  // Clear EVERYTHING on the canvas every frame to prevent stuck boxes
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   if (video.currentTime !== lastVideoTime) {
     lastVideoTime = video.currentTime;
     const now = performance.now();
 
-    // 1. Detect Objects
-    const objResults = objectDetector.detectForVideo(video, now);
+    try {
+      // 1. Detect Objects
+      const objResults = objectDetector.detectForVideo(video, now);
 
-    // 2. Detect Face & Emotions
-    const faceResults = faceLandmarker.detectForVideo(video, now);
+      // 2. Detect Face & Emotions
+      const faceResults = faceLandmarker.detectForVideo(video, now);
 
-    // Clear Canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    processDetections(objResults.detections, faceResults);
+      processDetections(objResults.detections, faceResults);
+    } catch (e) {
+      console.warn("Frame detection skipped:", e);
+    }
   }
 
   requestAnimationFrame(runPulse);
