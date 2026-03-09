@@ -119,23 +119,40 @@ function processDetections(objects, faces) {
   const videoW = video.videoWidth;
   const videoH = video.videoHeight;
 
-  // Filter & Overlap Cleaning
-  const validObjects = objects
-    .filter(det => ['person', 'cell phone'].includes(det.categories[0].categoryName))
-    .sort((a, b) => (b.boundingBox.width * b.boundingBox.height) - (a.boundingBox.width * a.boundingBox.height));
+  // 1. FILTER & SMART NMS: Handle multiple people while killing ghost boxes
+  const validObjects = objects.filter(det => ['person', 'cell phone'].includes(det.categories[0].categoryName));
+
+  // Custom NMS to prevent "Box Tunnel" but allow multiple students
+  const filteredObjects = [];
+  validObjects.sort((a, b) => b.categories[0].score - a.categories[0].score).forEach(current => {
+    const currentBox = current.boundingBox;
+
+    // Check if this box overlaps too much with an already accepted box
+    const isGhost = filteredObjects.some(accepted => {
+      const accBox = accepted.boundingBox;
+
+      // Calculate Intersection over Union (IoU) or simple overlap
+      const xOverlap = Math.max(0, Math.min(currentBox.originX + currentBox.width, accBox.originX + accBox.width) - Math.max(currentBox.originX, accBox.originX));
+      const yOverlap = Math.max(0, Math.min(currentBox.originY + currentBox.height, accBox.originY + accBox.height) - Math.max(currentBox.originY, accBox.originY));
+      const intersectionStr = xOverlap * yOverlap;
+      const areaCurrent = currentBox.width * currentBox.height;
+      const areaAcc = accBox.width * accBox.height;
+
+      // If overlap is > 70% of the smaller box, it's likely a ghost/duplicate
+      return (intersectionStr / Math.min(areaCurrent, areaAcc)) > 0.7;
+    });
+
+    if (!isGhost || current.categories[0].categoryName === 'cell phone') {
+      filteredObjects.push(current);
+    }
+  });
 
   let personCount = 0;
   let hasPhone = false;
-  let personDrawn = false;
 
-  validObjects.forEach(det => {
+  filteredObjects.forEach(det => {
     const label = det.categories[0].categoryName;
-
-    if (label === 'person') {
-      if (personDrawn) return;
-      personCount++;
-      personDrawn = true;
-    }
+    if (label === 'person') personCount++;
     if (label === 'cell phone') hasPhone = true;
 
     const { originX, originY, width, height } = det.boundingBox;
@@ -144,16 +161,17 @@ function processDetections(objects, faces) {
     const sw = (width / videoW) * displayW;
     const sh = (height / videoH) * displayH;
 
-    // Microsoft Blue / Danger Red
-    ctx.strokeStyle = label === 'cell phone' ? '#a4262c' : '#0078d4';
+    // Microsoft Style Labels
+    const color = label === 'cell phone' ? '#a4262c' : '#0078d4';
+    ctx.strokeStyle = color;
     ctx.lineWidth = 2;
     ctx.strokeRect(sx, sy, sw, sh);
 
-    // Refined Label
-    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fillStyle = color;
     ctx.font = "bold 11px 'Segoe UI'";
     const trName = labelsTr[label] || label;
-    ctx.fillRect(sx, sy - 20, ctx.measureText(trName).width + 10, 20);
+    const textW = ctx.measureText(trName).width;
+    ctx.fillRect(sx, sy - 20, textW + 10, 20);
     ctx.fillStyle = "white";
     ctx.fillText(trName, sx + 5, sy - 5);
   });
