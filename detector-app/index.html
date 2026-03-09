@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduVision AI | Kurumsal Öğrenci İzleme Sistemi</title>
+</head>
+
+<body>
+
+  <!-- Microsoft Style Loading Screen -->
+  <div id="loading-screen">
+    <div class="ms-spinner"></div>
+    <div id="loading-text" style="font-size: 14px; font-weight: 500; color: #605e5c;">Sistem Çekirdekleri Yükleniyor...
+    </div>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">E</div>
+      <div class="brand-name">EduVision <span style="font-weight: 400; color: #0078d4;">AI</span></div>
+    </div>
+
+    <nav class="nav-menu">
+      <a href="#" class="nav-item active">📊 Genel Bakış</a>
+      <a href="#" class="nav-item">✅ Otomatik Yoklama (Demo)</a>
+      <a href="#" class="nav-item">🎯 Odak Analizi</a>
+      <a href="#" class="nav-item">📈 Akademik Performans</a>
+      <a href="#" class="nav-item">🛡️ Kampüs Güvenliği</a>
+    </nav>
+
+    <div style="padding: 24px;">
+      <div style="font-size: 11px; color: #a19f9d; text-transform: uppercase; margin-bottom: 8px;">Lisans Durumu</div>
+      <div class="badge-ms bg-success">PRO Enterprise</div>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <!-- Top Header -->
+    <header>
+      <div class="header-left">
+        <span>Ana Sayfa</span>
+        <span style="color: #edebe9;">/</span>
+        <span style="font-weight: 600; color: #323130;">Akıllı Sınıf Paneli</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <span id="current-time" style="font-size: 13px; font-weight: 500;">00:00</span>
+        <div
+          style="width: 32px; height: 32px; background: #edebe9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px;">
+          AD</div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="content-body">
+
+      <!-- Statistics Cards -->
+      <div class="stats-row">
+        <div class="card">
+          <div class="st-title">Sınıf Mevcudu <span>👤</span></div>
+          <div id="occupancy-val" class="st-value">0 / 30</div>
+          <div class="st-trend up">↑ %2 artış (Gelecek hafta tahmini)</div>
+        </div>
+        <div class="card">
+          <div class="st-title">Ort. Odaklanma <span>🎯</span></div>
+          <div id="avg-focus-val" class="st-value">%0</div>
+          <div class="ms-progress-bg">
+            <div id="focus-progress" class="ms-progress-fill"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="st-title">Duygu Durumu <span>😊</span></div>
+          <div id="mood-indicator" class="st-value" style="font-size: 20px; padding-top: 8px;">Bekleniyor</div>
+          <div class="ms-progress-bg">
+            <div id="mood-progress" class="ms-progress-fill"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="st-title">Aktif Alarmlar <span>⚠️</span></div>
+          <div id="active-alarms" class="st-value" style="font-size: 18px; color: #a4262c;">Sistem Kapalı</div>
+          <div id="alarm-desc" class="st-trend">Herhangi bir ihlal bulunmadı.</div>
+        </div>
+      </div>
+
+      <!-- Main Interactive Feed -->
+      <div class="feed-section">
+        <div class="card" style="padding: 0; overflow: hidden; position: relative;">
+          <div
+            style="padding: 16px; border-bottom: 1px solid #edebe9; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 16px;">Canlı Sınıf Analizi</h2>
+            <span class="badge-ms bg-neutral" id="system-status">● Modeller Hazır</span>
+          </div>
+          <div class="video-container">
+            <video id="webcam" autoplay playsinline></video>
+            <canvas id="canvas-overlay"></canvas>
+          </div>
+          <div style="padding: 16px; background: #faf9f8;">
+            <div class="controls-bar">
+              <button id="toggle-camera" class="btn-ms">🔘 Analizi Başlat</button>
+              <button class="btn-ms btn-sec">📷 Fotoğraf Al</button>
+              <div style="flex: 1;"></div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 12px;">Hassasiyet:</span>
+                <input type="range" id="conf-slider" min="10" max="95" value="60">
+                <span id="conf-val" style="font-size: 12px; min-width: 30px;">60%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teacher Insights (New) -->
+        <div style="margin-top: 20px;">
+          <h3
+            style="font-size: 14px; color: #605e5c; margin-bottom: 12px; font-weight: 600; text-transform: uppercase;">
+            Öğretmen Performans Analitiği</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="card">
+              <div class="st-title">Hareket Yoğunluğu (Isı Haritası) <span>🏃‍♂️</span></div>
+              <div
+                style="height: 100px; background: #faf9f8; border-radius: 4px; position: relative; border: 1px solid #edebe9; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <!-- Mock Heatmap points -->
+                <div
+                  style="position: absolute; left: 10%; width: 30px; height: 30px; background: rgba(16, 124, 16, 0.3); border-radius: 50%; filter: blur(8px);">
+                </div>
+                <div
+                  style="position: absolute; left: 25%; width: 45px; height: 45px; background: rgba(0, 120, 212, 0.2); border-radius: 50%; filter: blur(12px);">
+                </div>
+                <div
+                  style="position: absolute; left: 50%; width: 20px; height: 20px; background: rgba(164, 38, 44, 0.1); border-radius: 50%; filter: blur(6px);">
+                </div>
+                <span
+                  style="font-size: 11px; z-index: 1; font-weight: 600; color: #323130; background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 20px;">Kürsü
+                  / Tahta Odaklı</span>
+              </div>
+              <div class="st-trend" style="color: #605e5c; margin-top: 10px;">Erişim Alanı: Sınıfın %45'i (Arka Sıra
+                Erişimi Bekleniyor)</div>
+            </div>
+            <div class="card">
+              <div class="st-title">Anlatım Dinamiği (Jest Analizi) <span>👋</span></div>
+              <div style="display: flex; align-items: flex-end; gap: 6px; height: 60px; padding: 0 10px;">
+                <div style="flex: 1; background: #0078d4; height: 40%; border-radius: 2px 2px 0 0;"></div>
+                <div style="flex: 1; background: #0078d4; height: 75%; border-radius: 2px 2px 0 0;"></div>
+                <div style="flex: 1; background: #0078d4; height: 90%; border-radius: 2px 2px 0 0;"></div>
+                <div style="flex: 1; background: #0078d4; height: 60%; border-radius: 2px 2px 0 0;"></div>
+                <div style="flex: 1; background: #0078d4; height: 85%; border-radius: 2px 2px 0 0;"></div>
+                <div style="flex: 1; background: #0078d4; height: 30%; border-radius: 2px 2px 0 0;"></div>
+              </div>
+              <div class="st-value" style="font-size: 18px; margin-top: 12px; color: #107c10;">Aktif / Enerjik</div>
+              <div class="st-trend up">Jest kullanımı optimum seviyede.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Insights (Mock / Demo) -->
+        <div class="card" style="margin-top: 20px;">
+          <div class="feed-title">Yapay Zeka Eğitim Önerileri</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div style="padding: 12px; background: #f3f2f1; border-radius: 4px;">
+              <div style="font-weight: 600; font-size: 13px; color: #0078d4;">Pedagojik Analiz</div>
+              <p style="font-size: 12px; margin-top: 4px;">Sınıfın %85'i son 10 dakikadır odaklanmış durumda. Konu
+                anlatımına devam edebilirsiniz.</p>
+            </div>
+            <div style="padding: 12px; background: #fff4ce; border-radius: 4px;">
+              <div style="font-weight: 600; font-size: 13px; color: #797775;">Mola Uyarısı</div>
+              <p style="font-size: 12px; margin-top: 4px;">Önemli: Arka sıralardaki 3 öğrenci yorgunluk belirtisi
+                gösteriyor. 5 dk mola önerilir.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Activity & Logs -->
+      <div class="right-panel">
+        <div class="activity-feed-container">
+          <div class="feed-title">Gerçek Zamanlı Besleme</div>
+          <div id="activity-feed">
+            <div class="feed-item">
+              <span class="fi-time">Sistem Mesajı</span>
+              <span class="fi-text">Model motoru başarıyla başlatıldı. Sınıf analizi için kamerayı açın.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="feed-title">Yoklama Durumu</div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 13px;">Gelenler:</span>
+            <span style="font-weight: 600; color: #107c10;">28</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-size: 13px;">Beklenen:</span>
+            <span style="font-weight: 600;">30</span>
+          </div>
+          <div class="ms-progress-bg" style="height: 4px;">
+            <div style="width: 93%;" class="ms-progress-fill bg-success"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
