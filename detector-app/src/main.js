@@ -26,7 +26,7 @@ let objectDetector = null;
 let faceLandmarker = null;
 let isAnalysing = false;
 let lastVideoTime = -1;
-let minConfidence = 0.6;
+let minConfidence = 0.35; // Lowered to capture small background people and phones
 
 /**
  * Initialize MediaPipe AI Models
@@ -138,8 +138,8 @@ function processDetections(objects, faces) {
       const areaCurrent = currentBox.width * currentBox.height;
       const areaAcc = accBox.width * accBox.height;
 
-      // If overlap is > 70% of the smaller box, it's likely a ghost/duplicate
-      return (intersectionStr / Math.min(areaCurrent, areaAcc)) > 0.7;
+      // If overlap is > 85% of the smaller box, it's likely a ghost/duplicate
+      return (intersectionStr / Math.min(areaCurrent, areaAcc)) > 0.85;
     });
 
     if (!isGhost || current.categories[0].categoryName === 'cell phone') {
